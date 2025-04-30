@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity Registration Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #40f850; margin: 0; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: #1b292a; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(197, 234, 238, 0.1); }
+    .step { display: none; }
+    .step.active { display: block; }
+    input, select, textarea { width: 100%; padding: 8px; margin: 10px 0; }
+    button { padding: 10px 15px; margin: 5px; }
+    .preview img { max-width: 100px; margin: 10px 0; }
+    .hidden { display: none; }
+    .preview-doc { margin: 10px 0; }
+    @media print {
+      body * { visibility: hidden; }
+      .container, .container * { visibility: visible; }
+      .container { position: absolute; top: 0; left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Cybersecurity Registration Form</h2>
+  <form id="regForm">
+    <!-- Step 1 -->
+    <div class="step active">
+      <h3>Step 1: Personal Details</h3>
+      <input type="text" placeholder="Full Name" id="name" required>
+      <input type="text" placeholder="Address" id="address" required>
+      <input type="tel" placeholder="Mobile Number" id="mobile" required>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <h3>Step 2: Email</h3>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="button" onclick="validateEmail()">Next</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <h3>Step 3: Education Details</h3>
+      <textarea id="education" placeholder="Enter education details..." required></textarea>
+      <select id="course" required>
+        <option value="">Select Course</option>
+        <option>Cybersecurity Basics</option>
+        <option>Network Security(ADW)</option>
+        <option>Cloud Services(ADW)</option>
+        <option>Ethical Hacking</option>
+        <option>PYTHON(ADW)</option>
+        <option>HTML,CSS</option>
+        <option>Cryptography</option>
+        <option>UI/UX</option>
+        <option>Graphic Design</option>
+      </select>
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="button" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+      <h3>Step 4: Upload Photo and Document</h3>
+      <input type="file" id="photo" accept="image/*" required>
+      <input type="file" id="document" accept=".pdf" required>
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="button" onclick="previewForm()">Next</button>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+      <h3>Step 5: Preview & Submit</h3>
+      <div id="preview" class="preview"></div>
+      <button type="button" onclick="prevStep()">Back</button>
+      <button type="submit">Submit</button>
+      <button type="button" onclick="window.print()">Print</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+
+  function showStep(step) {
+    steps.forEach((s, i) => s.classList.toggle("active", i === step));
+    currentStep = step;
+  }
+
+  function nextStep() {
+    showStep(currentStep + 1);
+  }
+
+  function prevStep() {
+    showStep(currentStep - 1);
+  }
+
+  function validateEmail() {
+    const email = document.getElementById("email").value;
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) {
+      alert("Enter a valid email address.");
+    } else {
+      nextStep();
+    }
+  }
+
+  function previewForm() {
+    const name = document.getElementById("name").value;
+    const address = document.getElementById("address").value;
+    const mobile = document.getElementById("mobile").value;
+    const email = document.getElementById("email").value;
+    const education = document.getElementById("education").value;
+    const course = document.getElementById("course").value;
+    const photo = document.getElementById("photo").files[0];
+    const documentFile = document.getElementById("document").files[0];
+
+    const preview = document.getElementById("preview");
+    preview.innerHTML = `
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Address:</strong> ${address}</p>
+      <p><strong>Mobile:</strong> ${mobile}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Education:</strong> ${education}</p>
+      <p><strong>Course:</strong> ${course}</p>
+    `;
+
+    if (photo) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        preview.appendChild(img);
+      }
+      reader.readAsDataURL(photo);
+    }
+
+    if (documentFile) {
+      const docPreview = document.createElement("p");
+      docPreview.className = "preview-doc";
+      docPreview.textContent = `Document Uploaded: ${documentFile.name}`;
+      preview.appendChild(docPreview);
+    }
+
+    nextStep();
+  }
+
+  document.getElementById("regForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    alert("Registration submitted successfully!");
+    localStorage.setItem("cybersecurityRegistration", JSON.stringify({
+      name: document.getElementById("name").value,
+      address: document.getElementById("address").value,
+      mobile: document.getElementById("mobile").value,
+      email: document.getElementById("email").value,
+      education: document.getElementById("education").value,
+      course: document.getElementById("course").value,
+    }));
+    window.location.href = "Cyber-Edu Regisrtation.html";
+  });
+</script>
+</body>
+</html>
